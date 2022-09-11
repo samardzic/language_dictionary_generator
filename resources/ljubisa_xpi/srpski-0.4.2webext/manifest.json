@@ -1,0 +1,13 @@
+{
+    "applications": {
+        "gecko": {
+            "id": "Srpski_latinica@dictionaries.addons.mozilla.org"
+        }
+    },
+    "version": "0.4.2webext",
+    "dictionaries": {
+        "sr": "dictionaries/Srpski (Cirilica).dic"
+    },
+    "name": "Srpski",
+    "manifest_version": 2
+}
