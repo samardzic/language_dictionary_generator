@@ -1,7 +1,6 @@
 ## Thanks To
 
-- This Serbian dictionary was created by _**Ljubisa Radovanovic**_
-- [prevod@gmail.com](prevod@gmail.com) and is covered by the _GNU LGPL license_.
+- This Serbian dictionary was created by _**Ljubisa Radovanovic**_ [prevod@gmail.com](prevod@gmail.com) and is covered by the _GNU LGPL license_.
 
 <br/>
  
