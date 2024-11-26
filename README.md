@@ -1,7 +1,7 @@
 ## Serbian Translations
 
 - Translation words pool intended for generating Serbian words database.
-- This word base will be used for language packs and spellchech integrations.
+- This word base will be used for language packs and spell-chech integrations.
 
 <br/>
 
