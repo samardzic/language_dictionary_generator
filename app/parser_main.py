@@ -2,7 +2,7 @@ import os
 
 
 def text_parser():
-    os.chdir("..\\resources\\serbian_dict\\resources_sr")
+    os.chdir("..\\resources\\serbian_dict\\resources_sr\\old_books")
     # os.chdir("..\\resources\\book_sources")
     # file_name = "ciga_konj.txt"
     # file_name = "book_na_drini_cuprija.txt"
@@ -52,7 +52,8 @@ def text_parser():
     word_db.sort()
     # print(word_db)
     # print(word_counter)
-    with open("dict_rs.txt", "w", encoding="utf") as file_data:
+    output_file = os.getcwd() + ".\\..\\dict_rs.txt"
+    with open(output_file, "w", encoding="utf") as file_data:
         output_data = str(word_db)
         final_data = output_data.replace("', '", "\n")
         file_data.write(final_data)
