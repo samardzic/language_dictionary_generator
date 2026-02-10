@@ -9,14 +9,11 @@ Build a dictionary database and conversion tool that:
 
 ### Supported Language Variants
 
-| Key                      | Description                                  |
-|--------------------------|----------------------------------------------|
-| `sr_cirilica`            | Serbian Cyrillic (ћирилица)                  |
-| `sr_latinica`            | Serbian Latin (latinica)                     |
-| `sr_cirilica_extended`   | Serbian Cyrillic — extended dictionary       |
-| `sr_latinica_extended`   | Serbian Latin — extended dictionary          |
-| `hr_language`            | Croatian (hrvatski)                          |
-| `hr_language_extended`   | Croatian — extended dictionary               |
+| Key              | Description                    |
+|------------------|--------------------------------|
+| `sr_cirilica`    | Serbian Cyrillic (ћирилица)    |
+| `sr_latinica`    | Serbian Latin (latinica)       |
+| `hr_language`    | Croatian (hrvatski)            |
 
 ### Conversion Pairs
 
@@ -52,33 +49,37 @@ Any variant should be convertible to any other variant.
 
 #### `words` — Master Word Table
 
-| Column                 | Type    | Description                                          |
-|------------------------|---------|------------------------------------------------------|
-| `id`                   | INTEGER | Primary key, autoincrement                           |
-| `sr_cirilica`          | TEXT    | Word in Serbian Cyrillic (NOT NULL)                  |
-| `sr_latinica`          | TEXT    | Word in Serbian Latin (NOT NULL)                     |
-| `sr_cirilica_extended` | TEXT    | Word in Serbian Cyrillic — extended dictionary       |
-| `sr_latinica_extended` | TEXT    | Word in Serbian Latin — extended dictionary          |
-| `hr_language`          | TEXT    | Croatian equivalent (NULL if same as sr_latinica)    |
-| `hr_language_extended` | TEXT    | Croatian — extended dictionary                       |
+| Column        | Type    | Description                                          |
+|---------------|---------|------------------------------------------------------|
+| `id`          | INTEGER | Primary key, autoincrement                           |
+| `sr_cirilica` | TEXT    | Word in Serbian Cyrillic (NOT NULL)                  |
+| `sr_latinica` | TEXT    | Word in Serbian Latin (NOT NULL)                     |
+| `hr_language` | TEXT    | Croatian equivalent (NULL if same as sr_latinica)    |
 
-#### `sources` — Word Source Tracking
+#### `sources` — Source Files
+
+| Column      | Type    | Description                               |
+|-------------|---------|-------------------------------------------|
+| `id`        | INTEGER | Primary key, autoincrement                |
+| `file_name` | TEXT    | Source file name (UNIQUE)                 |
+
+#### `word_sources` — Word ↔ Source Junction
 
 | Column      | Type    | Description                               |
 |-------------|---------|-------------------------------------------|
 | `id`        | INTEGER | Primary key, autoincrement                |
 | `word_id`   | INTEGER | Foreign key → `words.id`                  |
-| `file_name` | TEXT    | Source file the word was extracted from    |
+| `source_id` | INTEGER | Foreign key → `sources.id`                |
 
 ### Indexes
 
-- `UNIQUE INDEX` on `words.sr_latinica` — primary key for dedup (Phase 1 seed language)
+- `UNIQUE INDEX` on `words.sr_latinica` — primary key for dedup
 - `UNIQUE INDEX` on `words.sr_cirilica` — prevent duplicate Cyrillic entries
-- `UNIQUE INDEX` on `words.sr_latinica_extended` — dedup for extended Latin entries
-- `UNIQUE INDEX` on `words.sr_cirilica_extended` — dedup for extended Cyrillic entries
 - `UNIQUE INDEX` on `words.hr_language` — prevent duplicate Croatian entries
-- `UNIQUE INDEX` on `words.hr_language_extended` — dedup for extended Croatian entries
-- `INDEX` on `sources.word_id` — fast join to word sources
+- `UNIQUE INDEX` on `sources.file_name` — one row per source file
+- `UNIQUE INDEX` on `word_sources(word_id, source_id)` — prevent duplicate links
+- `INDEX` on `word_sources.word_id` — fast join to words
+- `INDEX` on `word_sources.source_id` — fast join to sources
 
 ---
 
@@ -86,19 +87,28 @@ Any variant should be convertible to any other variant.
 
 ### Phase 1 — Seed the Dictionary
 
-**Goal:** Build a large `sr_latinica` dictionary and derive `sr_cirilica` from it.
+**Goal:** Build a large dictionary by accepting words in either script and auto-generating the other.
+
+**Input:** A word in `sr_cirilica` or `sr_latinica` (the app detects the script automatically).
+
+**Insertion flow:**
 
 1. Parse all available source text files and extract unique words
-2. Populate the `sr_latinica` column as the primary entry for each word
-3. Auto-generate the `sr_cirilica` column by applying Latin → Cyrillic transliteration
-4. Result: a database where every row has both `sr_latinica` and `sr_cirilica` filled
+2. For each word, detect whether it is Cyrillic or Latin
+3. Transliterate to produce the counterpart:
+   - Cyrillic input → auto-generate `sr_latinica` (5.2 Transliteration)
+   - Latin input → auto-generate `sr_cirilica` (5.2 Transliteration)
+4. INSERT both `sr_cirilica` and `sr_latinica` into the `words` table
+5. SQLite enforces `UNIQUE INDEX` on both columns — duplicates are rejected automatically
+6. Record the source file in the `sources` table (FK → `words.id`)
+7. Result: a database where every row has both `sr_latinica` and `sr_cirilica` filled
 
 ### Phase 2 — Incremental Import
 
 **Goal:** Grow the dictionary over time by importing new word lists without creating duplicates.
 
-1. Accept an input word list (file or in-memory list)
-2. For each word, check if it already exists in the database:
+1. Accept an input word list (file or in-memory list) in either script
+2. For each word, detect the script and check if it already exists in the database:
    - Look up against `sr_latinica` column
    - Look up against `sr_cirilica` column
 3. If the word exists in either column → **skip**
@@ -146,13 +156,13 @@ Transliteration must be bidirectional (Latin → Cyrillic requires digraph handl
 
 For words that differ between variants, maintain explicit mappings. Examples:
 
-| sr_cirilica | sr_latinica | sr_cirilica_extended | sr_latinica_extended | hr_language | hr_language_extended |
-|-------------|-------------|----------------------|----------------------|-------------|----------------------|
-| хлеб        | hleb        | хлеб                 | hleb                 | kruh        | kruh                 |
-| ваздух      | vazduh      | ваздух               | vazduh               | zrak        | zrak                 |
-| воз         | voz         | воз                  | voz                  | vlak        | vlak                 |
+| sr_cirilica | sr_latinica | hr_language |
+|-------------|-------------|-------------|
+| хлеб        | hleb        | kruh        |
+| ваздух      | vazduh      | zrak        |
+| воз         | voz         | vlak        |
 
-Words that are identical across variants only need the `sr_cirilica` and `sr_latinica` columns populated; `hr_language` and the extended columns remain `NULL` to indicate equivalence with `sr_latinica`.
+Words that are identical across variants only need the `sr_cirilica` and `sr_latinica` columns populated; `hr_language` remains `NULL` to indicate equivalence with `sr_latinica`.
 
 ### 5.4 Text Conversion
 
