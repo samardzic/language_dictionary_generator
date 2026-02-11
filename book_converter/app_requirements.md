@@ -55,6 +55,7 @@ Any variant should be convertible to any other variant.
 | `sr_cirilica` | TEXT    | Word in Serbian Cyrillic (NOT NULL)                  |
 | `sr_latinica` | TEXT    | Word in Serbian Latin (NOT NULL)                     |
 | `hr_language` | TEXT    | Croatian equivalent (NULL if same as sr_latinica)    |
+| `source_id`  | INTEGER | Foreign key → `sources.id`                           |
 
 #### `sources` — Source Files
 
@@ -63,23 +64,13 @@ Any variant should be convertible to any other variant.
 | `id`        | INTEGER | Primary key, autoincrement                |
 | `file_name` | TEXT    | Source file name (UNIQUE)                 |
 
-#### `word_sources` — Word ↔ Source Junction
-
-| Column      | Type    | Description                               |
-|-------------|---------|-------------------------------------------|
-| `id`        | INTEGER | Primary key, autoincrement                |
-| `word_id`   | INTEGER | Foreign key → `words.id`                  |
-| `source_id` | INTEGER | Foreign key → `sources.id`                |
-
 ### Indexes
 
 - `UNIQUE INDEX` on `words.sr_latinica` — primary key for dedup
 - `UNIQUE INDEX` on `words.sr_cirilica` — prevent duplicate Cyrillic entries
 - `UNIQUE INDEX` on `words.hr_language` — prevent duplicate Croatian entries
+- `INDEX` on `words.source_id` — fast join to sources
 - `UNIQUE INDEX` on `sources.file_name` — one row per source file
-- `UNIQUE INDEX` on `word_sources(word_id, source_id)` — prevent duplicate links
-- `INDEX` on `word_sources.word_id` — fast join to words
-- `INDEX` on `word_sources.source_id` — fast join to sources
 
 ---
 

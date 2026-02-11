@@ -78,13 +78,8 @@ def import_words():
 
             try:
                 cursor.execute(
-                    "INSERT INTO words (sr_cirilica, sr_latinica) VALUES (?, ?)",
-                    (word_cyr, word_lat),
-                )
-                word_id = cursor.lastrowid
-                cursor.execute(
-                    "INSERT INTO word_sources (word_id, source_id) VALUES (?, ?)",
-                    (word_id, source_id),
+                    "INSERT INTO words (sr_cirilica, sr_latinica, source_id) VALUES (?, ?, ?)",
+                    (word_cyr, word_lat, source_id),
                 )
                 inserted += 1
             except sqlite3.IntegrityError:

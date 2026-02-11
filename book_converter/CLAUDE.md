@@ -1,3 +1,16 @@
+# Project Context
+
+## Aliases
+
+| Term          | Path                                                        |
+|---------------|-------------------------------------------------------------|
+| db, database  | /book_converter/db/dictionary.db                            |
+| sources       | /book_converter/language_sources                            |
+| project       | /book_converter                                             |
+
+
+
+
 # Development Guide - General Guidelines & Best Practices
 
 This document contains general development guidelines, architectural patterns, and best practices for software development. For project-specific implementations, see [Project Design Document](docs/project_design.md).
@@ -16,6 +29,7 @@ This document contains general development guidelines, architectural patterns, a
 10. [Documentation Standards](#documentation-standards)
 
 ---
+
 
 ## Architecture Guidelines
 
