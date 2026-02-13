@@ -3,13 +3,10 @@ import os
 import re
 
 
-os.chdir("..\\resources\\book_sources")
 relative_path = os.getcwd()  # /home/ime/Build/python_sandbox
-print("Relative path is: " + relative_path)
-
-source_file = relative_path + "\\book_hunger_games_mini.txt"
+os.chdir(".\\resources\\book_sources")
+source_file = relative_path + ".\\resources\\book_sources\\book_hunger_games_mini.txt"
 print("Sources: " + source_file)
-
 
 # Opens the source file and stores it as a FILE_INPUT
 with open(source_file) as file_input:
@@ -37,4 +34,4 @@ word_list.sort()
 word_count = [ii for n,ii in enumerate(word_list) if ii not in word_list[:n]]
 
 for index, word_count in enumerate(word_count, start=1):
-    print(index, word_count);
+    print(index, word_count.lower())

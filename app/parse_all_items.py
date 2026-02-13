@@ -2,7 +2,12 @@ import os
 
 from app.parser_main import text_parser
 
-os.chdir("..\\resources\\serbian_dict\\resources_sr")
+""" Linux system """
+# os.chdir("..\\resources\\serbian_dict\\resources_sr")
+
+# Windows system
+os.chdir("./resources/serbian_dict/resources_sr")
+
 relative_path = os.getcwd()
 print(relative_path)
 all_words = []

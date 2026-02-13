@@ -2,6 +2,8 @@ import os
 
 
 def text_parser():
+    
+    """ Linux system """
     os.chdir("..\\resources\\serbian_dict\\resources_sr\\old_books")
     # os.chdir("..\\resources\\book_sources")
     # file_name = "ciga_konj.txt"
@@ -9,6 +11,7 @@ def text_parser():
     # file_name = "book_necista_krv.txt"
     # relative_path = os.getcwd()
 
+    """ Windows system """
     # os.chdir("..\\resources\\serbian_dict\\resources_sr")
     # relative_path = os.getcwd()
     # print(relative_path)

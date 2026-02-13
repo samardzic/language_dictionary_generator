@@ -1,8 +1,9 @@
 import os
 
-os.chdir("..\\resources\\serbian_dict\\resources_sr")
+# os.chdir("..\\resources\\serbian_dict\\resources_sr")
 # os.chdir("..\\resources\\book_sources")
-# file_name = "ciga_konj.txt"
+os.chdir("./resources/book_sources")
+file_name = "book_tesla.txt"
 # file_name = "book_na_drini_cuprija.txt"
 # file_name = "book_necista_krv.txt"
 # relative_path = os.getcwd()

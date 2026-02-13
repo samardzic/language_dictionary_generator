@@ -2,12 +2,10 @@ import os
 import re
 
 
-os.chdir("..\\resources\\book_sources")
-
 relative_path = os.getcwd()  # /home/ime/Build/python_sandbox
 print("Relative path is: " + relative_path)
 
-source_file = relative_path + "\\book_hunger_games_short.txt"
+source_file = relative_path + ".\\resources\\book_sources\\book_hunger_games_short.txt"
 print("Sources: " + source_file)
 
 # Opens the source file and stores it as a FILE_INPUT
@@ -21,13 +19,14 @@ regex_list = re.sub(r"[^a-zA-Z0-9]", " ", my_data)
 while '  ' in regex_list:
     regex_list = regex_list.replace('  ', ' ')
 
-# print(regex_list)
+print(regex_list)
 
 
 words_number = 0
 
 for c in my_data:
     if my_data != " ":
+        # print("This is my data:", my_data)
         words_number += 1
         print(words_number)
 
