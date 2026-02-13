@@ -1,0 +1,6 @@
+# PDF Conversion Libraries (choose one or both)
+PyPDF2>=3.0.0
+pdfplumber>=0.9.0
+
+# Note: pdfplumber generally provides better text extraction quality
+# but PyPDF2 is lighter and faster for simple PDFs

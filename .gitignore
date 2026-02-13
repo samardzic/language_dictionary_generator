@@ -144,3 +144,4 @@ report.html
 .idea
 Resources/testresultdir/results.xml
 Tests/SindriMobileTests/Results/squishResultdir/results.xml
+.DS_Store
